@@ -1,0 +1,24 @@
+CREATE TABLE TodoItem (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    isCompleted INTEGER NOT NULL
+);
+
+selectAll:
+SELECT * FROM TodoItem;
+
+selectById:
+SELECT * FROM TodoItem WHERE id = ?;
+
+insertItem:
+INSERT INTO TodoItem (title, isCompleted)
+VALUES (?, ?);
+
+updateItem:
+UPDATE TodoItem
+SET title = ?, isCompleted = ?
+WHERE id = ?;
+
+deleteItem:
+DELETE FROM TodoItem
+WHERE id = ?;
