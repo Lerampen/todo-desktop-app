@@ -14,6 +14,7 @@ class TodoViewModel(private val repository: TodoRepository) {
 
     val todos = mutableStateOf<List<TodoItem>>(emptyList())
     val newTodoTitle = mutableStateOf("")
+    val editingTodo = mutableStateOf<TodoItem?>(null)
 
     init {
         loadTodos()
@@ -24,6 +25,13 @@ class TodoViewModel(private val repository: TodoRepository) {
             todos.value = repository.getAllTodos()
         }
     }
+
+    fun startEditingTodo(todoItem: TodoItem) {
+        editingTodo.value = todoItem
+    }
+     fun cancelEditing() {
+         editingTodo.value = null
+     }
 
     fun addTodo() {
         val title = newTodoTitle.value
@@ -36,9 +44,21 @@ class TodoViewModel(private val repository: TodoRepository) {
         }
     }
 
+    fun editTodo(id: Long, newTitle : String) {
+        viewModelScope.launch {
+            repository.updateTodo(id = id, title = newTitle, isCompleted = editingTodo.value?.isCompleted ?: false)
+            loadTodos()
+        }
+    }
+
+
     fun toggleTodo(id: Long, isCompleted: Boolean) {
         viewModelScope.launch {
-            repository.toggleTodo(id, !isCompleted)
+            val todo = todos.value.find { it.id == id }
+            todo?.let {
+                repository.updateTodo(id = id, title = it.title, isCompleted = isCompleted)
+            }
+//            repository.toggleTodo(id, isCompleted)
             loadTodos()
         }
     }

@@ -16,6 +16,13 @@ class TodoRepository(private val database: AppDatabase) {
         database.appDatabaseQueries.insertItem(title, isCompleted = 0L)
     }
 
+    suspend fun updateTodo(id: Long,title: String, isCompleted: Boolean) = withContext(Dispatchers.IO){
+        database.appDatabaseQueries.updateItem(
+            id = id,
+            title = title,
+            isCompleted = if (isCompleted) 1L else 0L
+        )
+    }
     suspend fun toggleTodo(id: Long, isCompleted: Boolean) = withContext(Dispatchers.IO) {
         val isCompletedLong = if (isCompleted) 1L else 0L
         val currentTodo = database.appDatabaseQueries.selectById(id).executeAsOne()
